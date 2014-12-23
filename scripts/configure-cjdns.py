@@ -1,7 +1,22 @@
 #!/usr/bin/env python2
-import json,os,sys
+import json,os,re,sys
 
-original = json.load(open("/etc/cjdroute.conf"))
+comment_re = re.compile(
+    '(^)?[^\S\n]*/(?:\*(.*?)\*/[^\S\n]*|/[^\n]*)($)?',
+    re.DOTALL | re.MULTILINE
+)
+
+def parse_json(filename):
+    with open(filename) as f:
+        contents = ''.join(f.readlines())
+        match = comment_re.search(contents)
+        while match:
+            contents = contents[:match.start()] + contents[match.end():]
+            match = comment_re.search(contents)
+
+        return json.loads(contents)
+
+original = parse_json("/etc/cjdroute.conf")
 
 original['interfaces']['ETHInterface'] = []
 original['interfaces']['ETHInterface'].append({"bind": "eth0", "beacon": 2, "connectTo": {}})

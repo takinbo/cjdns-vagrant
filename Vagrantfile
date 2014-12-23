@@ -111,9 +111,8 @@ Vagrant.configure("2") do |config|
 end
 
 $script = <<SCRIPT
-apt-get -y install cmake git build-essential
+apt-get update && apt-get -y install git build-essential
 /vagrant/scripts/install-cjdns.sh
-
 SCRIPT
 
 Vagrant.configure("2") do |config|
